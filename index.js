@@ -75,7 +75,7 @@ client.on('messageCreate', async (message) => {
         
         const embed = new EmbedBuilder()
             .setColor(0x0099FF)
-            .setTitle('📊 Progress Finished')
+            .setTitle('📊 Members pulling')  // <-- Değişti
             .addFields(
                 { name: 'Guild', value: serverName, inline: true },
                 { name: 'Total', value: TOTAL.toString(), inline: true },
@@ -101,7 +101,7 @@ client.on('messageCreate', async (message) => {
         
         const embed = new EmbedBuilder()
             .setColor(0x0099FF)
-            .setTitle('📊 Progress Finished')
+            .setTitle('📊 Members pulling')  // <-- Değişti
             .addFields(
                 { name: 'Guild', value: serverName, inline: true },
                 { name: 'Total', value: TOTAL.toString(), inline: true },
