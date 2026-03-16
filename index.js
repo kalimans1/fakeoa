@@ -11,10 +11,25 @@ const client = new Client({
     ]
 });
 
-// Rastgele sayı üretici
-function randomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+// Global sayaçlar (her komutta artacak)
+let totalOAuths = 7284;
+let todayOAuths = 124;
+let weekOAuths = 892;
+let monthOAuths = 3456;
+let uniqueUsers = 5231;
+
+// Sunucu sayaçları (her !progress komutunda artacak)
+let serverMembers = 7284; // Üye sayısı
+let serverTotal = 4672;
+let serverDesired = 4672;
+let serverSuccess = 654;
+let serverAlready = 0;
+let serverError = 0;
+let serverExpired = 2061;
+let serverLimit = 589;
+
+// Son kullanılan sunucu ismi
+let lastServerName = "iba4otko";
 
 // Rastgele sunucu ismi üretici
 function randomServerName() {
@@ -32,6 +47,7 @@ function randomServerName() {
 client.once('ready', () => {
     console.log(`✅ ${client.user.tag} olarak giriş yapıldı!`);
     console.log(`📋 Komutlar: !help, !progress, !oauths, !progress <sunucu-ismi>`);
+    console.log(`📊 Başlangıç değerleri: OAuths=${totalOAuths}, Members=${serverMembers}`);
 });
 
 client.on('messageCreate', async (message) => {
@@ -45,9 +61,9 @@ client.on('messageCreate', async (message) => {
             .setDescription('Aşağıdaki komutları kullanabilirsin:')
             .addFields(
                 { name: '`!help`', value: 'Bu mesajı gösterir.', inline: false },
-                { name: '`!progress`', value: 'Rastgele sunucu istatistikleri gösterir (üye sayısı sabit: 7284).', inline: false },
+                { name: '`!progress`', value: 'Sunucu istatistiklerini gösterir (her kullanımda +1 artar).', inline: false },
                 { name: '`!progress <isim>`', value: 'Belirttiğin isimde sunucu istatistikleri gösterir.', inline: false },
-                { name: '`!oauths`', value: 'OAuth sayılarını gösterir.', inline: false }
+                { name: '`!oauths`', value: 'OAuth sayılarını gösterir (her kullanımda +1 artar).', inline: false }
             )
             .setFooter({ text: 'Developed by oa2.dev 🐍' })
             .setTimestamp();
@@ -57,94 +73,108 @@ client.on('messageCreate', async (message) => {
 
     // !progress komutu (rastgele sunucu ismi)
     if (message.content === '!progress') {
-        const serverName = randomServerName();
+        // Sayıları 1 artır
+        serverMembers += 1;
+        serverTotal += 1;
+        serverDesired += 1;
+        serverSuccess += 1;
+        serverAlready += 1;
+        serverError += 1;
+        serverExpired += 1;
+        serverLimit += 1;
         
-        // Rastgele istatistikler üret (üye sayısı sabit: 7284)
-        const total = randomInt(1000, 20000);
-        const desired = total; // Desired genelde total ile aynı
-        const success = randomInt(100, Math.floor(total * 0.3)); // %30'a kadar success
-        const alreadyOnServer = randomInt(0, 5000);
-        const error = randomInt(0, 50);
-        const expired = randomInt(500, 8000);
-        const limitServer = randomInt(100, 3000);
+        // Rastgele sunucu ismi üret
+        lastServerName = randomServerName();
         
         const embed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle('📊 Progress Finished')
             .addFields(
-                { name: 'Members on this server', value: '7284', inline: false },
-                { name: 'Guild', value: serverName, inline: true },
-                { name: 'Total', value: total.toString(), inline: true },
-                { name: 'Desired', value: desired.toString(), inline: true },
-                { name: 'Success', value: success.toString(), inline: true },
-                { name: 'Already on server', value: alreadyOnServer.toString(), inline: true },
-                { name: 'Error', value: error.toString(), inline: true },
-                { name: 'Expired', value: expired.toString(), inline: true },
-                { name: 'Limit Server', value: limitServer.toString(), inline: true }
+                { name: 'Members on this server', value: serverMembers.toString(), inline: false },
+                { name: 'Guild', value: lastServerName, inline: true },
+                { name: 'Total', value: serverTotal.toString(), inline: true },
+                { name: 'Desired', value: serverDesired.toString(), inline: true },
+                { name: 'Success', value: serverSuccess.toString(), inline: true },
+                { name: 'Already on server', value: serverAlready.toString(), inline: true },
+                { name: 'Error', value: serverError.toString(), inline: true },
+                { name: 'Expired', value: serverExpired.toString(), inline: true },
+                { name: 'Limit Server', value: serverLimit.toString(), inline: true }
             )
             .setFooter({ text: 'Developed by oa2.dev 🐍' })
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
+        console.log(`📈 !progress kullanıldı: ${lastServerName} - Members: ${serverMembers}`);
     }
     
     // !progress <isim> komutu (kullanıcının yazdığı sunucu ismi)
     if (message.content.startsWith('!progress ')) {
+        // Sayıları 1 artır
+        serverMembers += 1;
+        serverTotal += 1;
+        serverDesired += 1;
+        serverSuccess += 1;
+        serverAlready += 1;
+        serverError += 1;
+        serverExpired += 1;
+        serverLimit += 1;
+        
         const args = message.content.split(' ');
         args.shift(); // !progress kısmını at
         const serverName = args.join('-'); // Boşlukları tire ile birleştir
-        
-        // Rastgele istatistikler üret (üye sayısı sabit: 7284)
-        const total = randomInt(1000, 20000);
-        const desired = total;
-        const success = randomInt(100, Math.floor(total * 0.3));
-        const alreadyOnServer = randomInt(0, 5000);
-        const error = randomInt(0, 50);
-        const expired = randomInt(500, 8000);
-        const limitServer = randomInt(100, 3000);
+        lastServerName = serverName;
         
         const embed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle('📊 Progress Finished')
             .addFields(
-                { name: 'Members on this server', value: '7284', inline: false },
+                { name: 'Members on this server', value: serverMembers.toString(), inline: false },
                 { name: 'Guild', value: serverName, inline: true },
-                { name: 'Total', value: total.toString(), inline: true },
-                { name: 'Desired', value: desired.toString(), inline: true },
-                { name: 'Success', value: success.toString(), inline: true },
-                { name: 'Already on server', value: alreadyOnServer.toString(), inline: true },
-                { name: 'Error', value: error.toString(), inline: true },
-                { name: 'Expired', value: expired.toString(), inline: true },
-                { name: 'Limit Server', value: limitServer.toString(), inline: true }
+                { name: 'Total', value: serverTotal.toString(), inline: true },
+                { name: 'Desired', value: serverDesired.toString(), inline: true },
+                { name: 'Success', value: serverSuccess.toString(), inline: true },
+                { name: 'Already on server', value: serverAlready.toString(), inline: true },
+                { name: 'Error', value: serverError.toString(), inline: true },
+                { name: 'Expired', value: serverExpired.toString(), inline: true },
+                { name: 'Limit Server', value: serverLimit.toString(), inline: true }
             )
             .setFooter({ text: 'Developed by oa2.dev 🐍' })
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
+        console.log(`📈 !progress ${serverName} kullanıldı - Members: ${serverMembers}`);
     }
 
     // !oauths komutu
     if (message.content === '!oauths') {
+        // Sayıları 1 artır
+        totalOAuths += 1;
+        todayOAuths += 1;
+        weekOAuths += 1;
+        monthOAuths += 1;
+        uniqueUsers += 1;
+        
         const embed = new EmbedBuilder()
             .setColor(0xFF5733)
             .setTitle('🔑 OAuth Counts')
             .addFields(
-                { name: 'Total OAuths', value: '7284', inline: true },
-                { name: 'Today', value: randomInt(50, 500).toString(), inline: true },
-                { name: 'This Week', value: randomInt(500, 3000).toString(), inline: true },
-                { name: 'This Month', value: randomInt(2000, 8000).toString(), inline: true },
-                { name: 'Unique Users', value: randomInt(3000, 15000).toString(), inline: true }
+                { name: 'Total OAuths', value: totalOAuths.toString(), inline: true },
+                { name: 'Today', value: todayOAuths.toString(), inline: true },
+                { name: 'This Week', value: weekOAuths.toString(), inline: true },
+                { name: 'This Month', value: monthOAuths.toString(), inline: true },
+                { name: 'Unique Users', value: uniqueUsers.toString(), inline: true }
             )
             .setFooter({ text: 'Developed by oa2.dev 🐍' })
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
+        console.log(`🔑 !oauths kullanıldı - Total: ${totalOAuths}`);
     }
 });
 
 // Express ile basit bir web sunucusu (Render'ın sağlık kontrolü için)
 app.get('/', (req, res) => {
-    res.send('Bot is running! Komutlar: !help, !progress, !oauths');
+    res.send(`Bot is running! Komutlar: !help, !progress, !oauths<br>Total OAuths: ${totalOAuths} | Members: ${serverMembers}`);
 });
 
 app.listen(port, () => {
