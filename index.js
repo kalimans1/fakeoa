@@ -11,14 +11,14 @@ const client = new Client({
     ]
 });
 
-// Global sayaçlar (her komutta artacak)
-let totalOAuths = 7284;
-let todayOAuths = 124;
-let weekOAuths = 892;
-let monthOAuths = 3456;
-let uniqueUsers = 5231;
+// OAuth sayaçları (SABİT - resimdeki gibi dursun)
+const totalOAuths = 7284;
+const todayOAuths = 124;
+const weekOAuths = 892;
+const monthOAuths = 3456;
+const uniqueUsers = 5231;
 
-// Sunucu sayaçları (her !progress komutunda artacak)
+// Sunucu sayaçları (her !progress komutunda artacak - CANLI KATILIM GİBİ)
 let serverMembers = 7284; // Üye sayısı
 let serverTotal = 4672;
 let serverDesired = 4672;
@@ -47,7 +47,7 @@ function randomServerName() {
 client.once('ready', () => {
     console.log(`✅ ${client.user.tag} olarak giriş yapıldı!`);
     console.log(`📋 Komutlar: !help, !progress, !oauths, !progress <sunucu-ismi>`);
-    console.log(`📊 Başlangıç değerleri: OAuths=${totalOAuths}, Members=${serverMembers}`);
+    console.log(`📊 Başlangıç değerleri: Members=${serverMembers}, Total=${serverTotal}`);
 });
 
 client.on('messageCreate', async (message) => {
@@ -61,9 +61,9 @@ client.on('messageCreate', async (message) => {
             .setDescription('Aşağıdaki komutları kullanabilirsin:')
             .addFields(
                 { name: '`!help`', value: 'Bu mesajı gösterir.', inline: false },
-                { name: '`!progress`', value: 'Sunucu istatistiklerini gösterir (her kullanımda +1 artar).', inline: false },
+                { name: '`!progress`', value: 'Sunucu istatistiklerini gösterir (her kullanımda +1 artar - canlı katılım gibi).', inline: false },
                 { name: '`!progress <isim>`', value: 'Belirttiğin isimde sunucu istatistikleri gösterir.', inline: false },
-                { name: '`!oauths`', value: 'OAuth sayılarını gösterir (her kullanımda +1 artar).', inline: false }
+                { name: '`!oauths`', value: 'OAuth sayılarını gösterir (sabit).', inline: false }
             )
             .setFooter({ text: 'Developed by oa2.dev 🐍' })
             .setTimestamp();
@@ -73,7 +73,7 @@ client.on('messageCreate', async (message) => {
 
     // !progress komutu (rastgele sunucu ismi)
     if (message.content === '!progress') {
-        // Sayıları 1 artır
+        // Sayıları 1 artır (SADECE PROGRESS)
         serverMembers += 1;
         serverTotal += 1;
         serverDesired += 1;
@@ -104,12 +104,12 @@ client.on('messageCreate', async (message) => {
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
-        console.log(`📈 !progress kullanıldı: ${lastServerName} - Members: ${serverMembers}`);
+        console.log(`📈 !progress kullanıldı: ${lastServerName} - Members: ${serverMembers} (+1 arttı)`);
     }
     
     // !progress <isim> komutu (kullanıcının yazdığı sunucu ismi)
     if (message.content.startsWith('!progress ')) {
-        // Sayıları 1 artır
+        // Sayıları 1 artır (SADECE PROGRESS)
         serverMembers += 1;
         serverTotal += 1;
         serverDesired += 1;
@@ -142,18 +142,11 @@ client.on('messageCreate', async (message) => {
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
-        console.log(`📈 !progress ${serverName} kullanıldı - Members: ${serverMembers}`);
+        console.log(`📈 !progress ${serverName} kullanıldı - Members: ${serverMembers} (+1 arttı)`);
     }
 
-    // !oauths komutu
+    // !oauths komutu (SABİT - artış YOK)
     if (message.content === '!oauths') {
-        // Sayıları 1 artır
-        totalOAuths += 1;
-        todayOAuths += 1;
-        weekOAuths += 1;
-        monthOAuths += 1;
-        uniqueUsers += 1;
-        
         const embed = new EmbedBuilder()
             .setColor(0xFF5733)
             .setTitle('🔑 OAuth Counts')
@@ -168,13 +161,13 @@ client.on('messageCreate', async (message) => {
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
-        console.log(`🔑 !oauths kullanıldı - Total: ${totalOAuths}`);
+        console.log(`🔑 !oauths kullanıldı - Total: ${totalOAuths} (sabit)`);
     }
 });
 
 // Express ile basit bir web sunucusu (Render'ın sağlık kontrolü için)
 app.get('/', (req, res) => {
-    res.send(`Bot is running! Komutlar: !help, !progress, !oauths<br>Total OAuths: ${totalOAuths} | Members: ${serverMembers}`);
+    res.send(`Bot is running! Komutlar: !help, !progress, !oauths<br>Progress Members: ${serverMembers} (canlı artıyor) | OAuths: ${totalOAuths} (sabit)`);
 });
 
 app.listen(port, () => {
