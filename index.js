@@ -11,25 +11,21 @@ const client = new Client({
     ]
 });
 
-// OAuth sayaçları (SABİT - resimdeki gibi dursun)
-const totalOAuths = 7284;
-const todayOAuths = 124;
-const weekOAuths = 892;
-const monthOAuths = 3456;
-const uniqueUsers = 5231;
+// Progress sabit değerleri
+const DESIRED = 4676;
+const TOTAL = DESIRED;
+const SUCCESS = 1;
+const ALREADY = 0;
+const ERROR = 0;
+const EXPIRED = 0;
+const LIMIT = 0;
 
-// Sunucu sayaçları (her !progress komutunda artacak - CANLI KATILIM GİBİ)
-let serverMembers = 7284; // Üye sayısı
-let serverTotal = 4672;
-let serverDesired = 4672;
-let serverSuccess = 654;
-let serverAlready = 0;
-let serverError = 0;
-let serverExpired = 2061;
-let serverLimit = 589;
-
-// Son kullanılan sunucu ismi
-let lastServerName = "iba4otko";
+// OAuth gerçekçi değerler
+const TOTAL_OAUTHS = 4676;      // Toplam OAuth
+const TODAY_OAUTHS = 180;        // Bugün katılan
+const WEEK_OAUTHS = 1240;        // Bu hafta katılan
+const MONTH_OAUTHS = 3456;       // Bu ay katılan
+const UNIQUE_USERS = 4231;       // Tekil kullanıcı
 
 // Rastgele sunucu ismi üretici
 function randomServerName() {
@@ -47,7 +43,8 @@ function randomServerName() {
 client.once('ready', () => {
     console.log(`✅ ${client.user.tag} olarak giriş yapıldı!`);
     console.log(`📋 Komutlar: !help, !progress, !oauths, !progress <sunucu-ismi>`);
-    console.log(`📊 Başlangıç değerleri: Members=${serverMembers}, Total=${serverTotal}`);
+    console.log(`📊 Progress: Desired: ${DESIRED}, Success: ${SUCCESS}`);
+    console.log(`📊 OAuths: Total: ${TOTAL_OAUTHS}, Today: ${TODAY_OAUTHS}, Week: ${WEEK_OAUTHS}`);
 });
 
 client.on('messageCreate', async (message) => {
@@ -61,9 +58,9 @@ client.on('messageCreate', async (message) => {
             .setDescription('Aşağıdaki komutları kullanabilirsin:')
             .addFields(
                 { name: '`!help`', value: 'Bu mesajı gösterir.', inline: false },
-                { name: '`!progress`', value: 'Sunucu istatistiklerini gösterir (her kullanımda +1 artar - canlı katılım gibi).', inline: false },
+                { name: '`!progress`', value: 'Sunucu istatistiklerini gösterir (Desired: 4676, Success: 1, diğerleri 0).', inline: false },
                 { name: '`!progress <isim>`', value: 'Belirttiğin isimde sunucu istatistikleri gösterir.', inline: false },
-                { name: '`!oauths`', value: 'OAuth sayılarını gösterir (sabit).', inline: false }
+                { name: '`!oauths`', value: 'OAuth sayılarını gösterir (Total: 4676, Today: 180, Week: 1240, Month: 3456, Unique: 4231).', inline: false }
             )
             .setFooter({ text: 'Developed by oa2.dev 🐍' })
             .setTimestamp();
@@ -73,101 +70,78 @@ client.on('messageCreate', async (message) => {
 
     // !progress komutu (rastgele sunucu ismi)
     if (message.content === '!progress') {
-        // Sayıları 1 artır (SADECE PROGRESS)
-        serverMembers += 1;
-        serverTotal += 1;
-        serverDesired += 1;
-        serverSuccess += 1;
-        serverAlready += 1;
-        serverError += 1;
-        serverExpired += 1;
-        serverLimit += 1;
-        
         // Rastgele sunucu ismi üret
-        lastServerName = randomServerName();
+        const serverName = randomServerName();
         
         const embed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle('📊 Progress Finished')
             .addFields(
-                { name: 'Members on this server', value: serverMembers.toString(), inline: false },
-                { name: 'Guild', value: lastServerName, inline: true },
-                { name: 'Total', value: serverTotal.toString(), inline: true },
-                { name: 'Desired', value: serverDesired.toString(), inline: true },
-                { name: 'Success', value: serverSuccess.toString(), inline: true },
-                { name: 'Already on server', value: serverAlready.toString(), inline: true },
-                { name: 'Error', value: serverError.toString(), inline: true },
-                { name: 'Expired', value: serverExpired.toString(), inline: true },
-                { name: 'Limit Server', value: serverLimit.toString(), inline: true }
+                { name: 'Guild', value: serverName, inline: true },
+                { name: 'Total', value: TOTAL.toString(), inline: true },
+                { name: 'Desired', value: DESIRED.toString(), inline: true },
+                { name: 'Success', value: SUCCESS.toString(), inline: true },
+                { name: 'Already on server', value: ALREADY.toString(), inline: true },
+                { name: 'Error', value: ERROR.toString(), inline: true },
+                { name: 'Expired', value: EXPIRED.toString(), inline: true },
+                { name: 'Limit Server', value: LIMIT.toString(), inline: true }
             )
             .setFooter({ text: 'Developed by oa2.dev 🐍' })
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
-        console.log(`📈 !progress kullanıldı: ${lastServerName} - Members: ${serverMembers} (+1 arttı)`);
+        console.log(`📈 !progress kullanıldı: ${serverName}`);
     }
     
     // !progress <isim> komutu (kullanıcının yazdığı sunucu ismi)
     if (message.content.startsWith('!progress ')) {
-        // Sayıları 1 artır (SADECE PROGRESS)
-        serverMembers += 1;
-        serverTotal += 1;
-        serverDesired += 1;
-        serverSuccess += 1;
-        serverAlready += 1;
-        serverError += 1;
-        serverExpired += 1;
-        serverLimit += 1;
-        
         const args = message.content.split(' ');
         args.shift(); // !progress kısmını at
         const serverName = args.join('-'); // Boşlukları tire ile birleştir
-        lastServerName = serverName;
         
         const embed = new EmbedBuilder()
             .setColor(0x0099FF)
             .setTitle('📊 Progress Finished')
             .addFields(
-                { name: 'Members on this server', value: serverMembers.toString(), inline: false },
                 { name: 'Guild', value: serverName, inline: true },
-                { name: 'Total', value: serverTotal.toString(), inline: true },
-                { name: 'Desired', value: serverDesired.toString(), inline: true },
-                { name: 'Success', value: serverSuccess.toString(), inline: true },
-                { name: 'Already on server', value: serverAlready.toString(), inline: true },
-                { name: 'Error', value: serverError.toString(), inline: true },
-                { name: 'Expired', value: serverExpired.toString(), inline: true },
-                { name: 'Limit Server', value: serverLimit.toString(), inline: true }
+                { name: 'Total', value: TOTAL.toString(), inline: true },
+                { name: 'Desired', value: DESIRED.toString(), inline: true },
+                { name: 'Success', value: SUCCESS.toString(), inline: true },
+                { name: 'Already on server', value: ALREADY.toString(), inline: true },
+                { name: 'Error', value: ERROR.toString(), inline: true },
+                { name: 'Expired', value: EXPIRED.toString(), inline: true },
+                { name: 'Limit Server', value: LIMIT.toString(), inline: true }
             )
             .setFooter({ text: 'Developed by oa2.dev 🐍' })
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
-        console.log(`📈 !progress ${serverName} kullanıldı - Members: ${serverMembers} (+1 arttı)`);
+        console.log(`📈 !progress ${serverName} kullanıldı`);
     }
 
-    // !oauths komutu (SABİT - artış YOK)
+    // !oauths komutu (gerçekçi değerler)
     if (message.content === '!oauths') {
         const embed = new EmbedBuilder()
             .setColor(0xFF5733)
             .setTitle('🔑 OAuth Counts')
             .addFields(
-                { name: 'Total OAuths', value: totalOAuths.toString(), inline: true },
-                { name: 'Today', value: todayOAuths.toString(), inline: true },
-                { name: 'This Week', value: weekOAuths.toString(), inline: true },
-                { name: 'This Month', value: monthOAuths.toString(), inline: true },
-                { name: 'Unique Users', value: uniqueUsers.toString(), inline: true }
+                { name: 'Total OAuths', value: TOTAL_OAUTHS.toString(), inline: true },
+                { name: 'Today', value: TODAY_OAUTHS.toString(), inline: true },
+                { name: 'This Week', value: WEEK_OAUTHS.toString(), inline: true },
+                { name: 'This Month', value: MONTH_OAUTHS.toString(), inline: true },
+                { name: 'Unique Users', value: UNIQUE_USERS.toString(), inline: true }
             )
             .setFooter({ text: 'Developed by oa2.dev 🐍' })
             .setTimestamp();
 
         message.channel.send({ embeds: [embed] });
-        console.log(`🔑 !oauths kullanıldı - Total: ${totalOAuths} (sabit)`);
+        console.log(`🔑 !oauths kullanıldı - Today: ${TODAY_OAUTHS}`);
     }
 });
 
 // Express ile basit bir web sunucusu (Render'ın sağlık kontrolü için)
 app.get('/', (req, res) => {
-    res.send(`Bot is running! Komutlar: !help, !progress, !oauths<br>Progress Members: ${serverMembers} (canlı artıyor) | OAuths: ${totalOAuths} (sabit)`);
+    res.send('Bot is running! Komutlar: !help, !progress, !oauths');
 });
 
 app.listen(port, () => {
