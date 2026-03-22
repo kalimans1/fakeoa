@@ -1,4 +1,18 @@
 const { Client, GatewayIntentBits } = require('discord.js');
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+
+// Web server (Render için)
+app.get('/', (req, res) => {
+    res.send('Fake OAuth Bot is running!');
+});
+
+app.listen(port, () => {
+    console.log(`Web server running on port ${port}`);
+});
+
+// Discord Bot
 const client = new Client({ 
     intents: [
         GatewayIntentBits.Guilds,
@@ -46,18 +60,15 @@ client.on('messageCreate', async (message) => {
         }
         
         try {
-            // Discord API'den sunucuyu bul
             const guild = await client.guilds.fetch(guildId);
             
             if (!guild) {
                 return message.channel.send('❌ Sunucu bulunamadı! Bot o sunucuda olmalı.');
             }
             
-            // Sunucudan çekilen bilgiler
             const serverName = guild.name;
             const memberCount = guild.memberCount;
             
-            // Sabit değerler
             const total = 7284;
             const desired = 7284;
             const success = 1;
@@ -65,7 +76,6 @@ client.on('messageCreate', async (message) => {
             const expired = 0;
             const limitServer = 0;
             
-            // Görseldeki format
             const output = `# staff-chat
 
 ${getFormattedDate()}
@@ -102,7 +112,6 @@ Developed by oa2.dev 🐍`;
 
             await message.channel.send(output);
             
-            // OAuth mesajı
             const oauthMsg = `\`\`\`
 Ouathes count
 
@@ -116,7 +125,7 @@ Total: ${oauthCount}
         }
     }
     
-    // !oauths komutu - sadece OAuth sayısını gösterir
+    // !oauths komutu
     if (message.content === '!oauths') {
         const oauthMsg = `\`\`\`
 Ouathes count
@@ -127,4 +136,4 @@ Total: ${oauthCount}
     }
 });
 
-client.login(process.env.token);
+client.login(process.env.TOKEN);
